@@ -1,7 +1,6 @@
 // /api/rates.js  (Next.js / Vercel API Route)
 
 export default async function handler(req, res) {
-  // Solo POST
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method not allowed' });
   }
@@ -17,18 +16,17 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: 'Faltan origen y/o destino' });
     }
 
-    // ---- Conversiones ----
-    // EasyPost espera peso en onzas (oz)
+    // Peso en kg -> onzas
     const kg = Math.max(0.01, Number(parcel?.weight_kg || parcel?.weight || 1));
     const oz = kg * 35.27396195;
 
-    // Dimensiones opcionales: si las pones en cm, se convierten a pulgadas
+    // cm -> pulgadas, opcional
     const toInch = (v) => {
       const n = Number(v);
       return n && n > 0 ? n / 2.54 : undefined;
     };
 
-    // ---- Shipment (MVP: USA -> USA) ----
+    // Shipment (MVP: USA -> USA)
     const shipment = {
       to_address:   { street1: String(destination), country: 'US' },
       from_address: { street1: String(origin),      country: 'US' },
@@ -44,24 +42,26 @@ export default async function handler(req, res) {
       shipment.parcel.height = H;
     }
 
-    // ---- Llamada a EasyPost ----
+    // DEBUG (ver en Vercel → Runtime Logs)
+    console.log('REQ_PAYLOAD ->', { origin, destination, parcel });
+    console.log('EP_SHIPMENT ->', shipment);
+
     const epRes = await fetch('https://api.easypost.com/v2/shipments', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Basic ' + Buffer.from(apiKey + ':').toString('base64'),
       },
-      body: JSON.stringify({ shipment }), // <- IMPORTANTE: wrapper "shipment"
+      body: JSON.stringify({ shipment }), // <- clave
     });
 
     const data = await epRes.json();
+    console.log('EP_STATUS', epRes.status, 'EP_RESP', data);
 
     if (!epRes.ok) {
-      // Pasa el error tal cual para ver qué falta
       return res.status(400).json({ error: 'EasyPost error', details: data });
     }
 
-    // Normaliza tarifas
     const rates = Array.isArray(data?.rates)
       ? data.rates.map((r) => ({
           id: r.id,
