@@ -1,38 +1,127 @@
-<script>
-  const $ = (s) => document.querySelector(s);
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>AhorraYa</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;margin:0;background:#f7f8fa;color:#111}
+    .wrap{max-width:900px;margin:40px auto;padding:0 16px}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+    h1{margin:0 0 16px 0}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .row3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    label{font-size:14px;color:#374151;display:block;margin:8px 0 6px}
+    input{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;background:#fff}
+    button{background:#ef6c00;color:#fff;border:0;border-radius:8px;padding:10px 14px;font-weight:600;cursor:pointer}
+    button:disabled{opacity:.6;cursor:not-allowed}
+    .muted{color:#6b7280;font-size:12px;margin-top:8px}
+    pre{background:#0b1020;color:#e5e7eb;border-radius:8px;padding:12px;overflow:auto}
+    .results{margin-top:16px}
+    .err{color:#b91c1c;white-space:pre-wrap}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>AhorraYa</h1>
+    <div class="card">
+      <div class="row">
+        <div>
+          <label>Origen (calle / ciudad / estado / ZIP / país)</label>
+          <input id="origin" placeholder="3575 Main Hwy, Miami, FL 33133, US" />
+        </div>
+        <div>
+          <label>Destino (calle / ciudad / estado / ZIP / país)</label>
+          <input id="destination" placeholder="1101 Brickell Ave, Miami, FL 33131, US" />
+        </div>
+      </div>
 
-  async function consultar() {
-    const origin = $('#origen').value.trim();
-    const destination = $('#destino').value.trim();
-    const weight_kg = Number($('#peso').value || 1);
-    const length_cm = Number($('#largo').value || 0);
-    const width_cm  = Number($('#ancho').value || 0);
-    const height_cm = Number($('#alto').value || 0);
+      <div class="row" style="margin-top:12px">
+        <div>
+          <label>Peso (kg)</label>
+          <input id="weight" type="number" step="0.01" placeholder="1" />
+        </div>
+        <div class="row3">
+          <div>
+            <label>Largo (cm)</label>
+            <input id="len" type="number" step="0.1" placeholder="23" />
+          </div>
+          <div>
+            <label>Ancho (cm)</label>
+            <input id="wid" type="number" step="0.1" placeholder="23" />
+          </div>
+          <div>
+            <label>Alto (cm)</label>
+            <input id="hei" type="number" step="0.1" placeholder="21" />
+          </div>
+        </div>
+      </div>
 
-    const payload = {
-      origin,
-      destination,
-      parcel: {
-        weight_kg,
-        length_cm,
-        width_cm,
-        height_cm,
-      },
-    };
+      <div style="margin-top:16px;display:flex;gap:12px;align-items:center">
+        <button id="btn">Consultar tarifas reales</button>
+        <span id="note" class="muted"></span>
+      </div>
 
-    const resp = await fetch('/api/rates', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-    });
+      <div class="results">
+        <div id="error" class="err"></div>
+        <pre id="out" style="display:none"></pre>
+      </div>
+    </div>
+  </div>
 
-    const data = await resp.json();
-    console.log('CLIENT_RESP', data);
+  <script>
+    const $ = (id) => document.getElementById(id);
+    const btn = $('btn'), out = $('out'), err = $('error'), note = $('note');
 
-    const out = document.getElementById('resultado');
-    out.textContent = resp.ok ? JSON.stringify(data, null, 2)
-                              : JSON.stringify(data, null, 2);
-  }
+    async function call() {
+      err.textContent = '';
+      out.style.display = 'none';
+      out.textContent = '';
 
-  document.getElementById('btn').addEventListener('click', consultar);
-</script>
+      const origin = $('origin').value.trim();
+      const destination = $('destination').value.trim();
+      const weight_kg = Number($('weight').value || 0.1);
+      const length_cm = Number($('len').value || 0);
+      const width_cm  = Number($('wid').value || 0);
+      const height_cm = Number($('hei').value || 0);
+
+      if (!origin || !destination) {
+        err.textContent = 'Origen y destino son obligatorios.';
+        return;
+      }
+
+      btn.disabled = true; btn.textContent = 'Consultando...';
+      note.textContent = '';
+
+      try {
+        const resp = await fetch('/api/rates', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            origin, destination,
+            parcel: { weight_kg, length_cm, width_cm, height_cm }
+          })
+        });
+
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok) {
+          err.textContent = JSON.stringify(data, null, 2);
+        } else {
+          // Si EasyPost responde con {rates:[...]} lo mostramos; si no, todo el objeto.
+          const printable = data.rates || data;
+          out.textContent = JSON.stringify(printable, null, 2);
+          out.style.display = 'block';
+        }
+      } catch (e) {
+        err.textContent = String(e);
+      } finally {
+        btn.disabled = false; btn.textContent = 'Consultar tarifas reales';
+      }
+    }
+
+    btn.addEventListener('click', call);
+    // Para depurar “pantalla blanca”: log de errores JS en consola
+    window.addEventListener('error', e => { console.error('JS Error:', e.message); });
+  </script>
+</body>
+</html>
