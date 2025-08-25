@@ -1,88 +1,38 @@
-<!doctype html>
-<html lang="es">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AhorraYa – MVP</title>
-  <style>
-    body{font-family: system-ui, -apple-system, Segoe UI, Roboto, Inter, Arial; margin:24px; background:#f6f7f9}
-    .card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;padding:16px;max-width:900px}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    label{font-size:12px;color:#374151;font-weight:600}
-    input{width:100%;padding:10px;border:1px solid #d1d5db;border-radius:10px;margin-top:6px}
-    button{background:#f97316;color:#fff;border:0;border-radius:10px;padding:10px 14px;font-weight:700;cursor:pointer}
-    table{width:100%;border-collapse:collapse;margin-top:12px}
-    th,td{border:1px solid #e5e7eb;padding:8px;text-align:left}
-    .muted{color:#6b7280;font-size:12px}
-    .error{color:#b91c1c;white-space:pre-wrap;margin-top:8px}
-  </style>
-</head>
-<body>
-  <h1>AhorraYa</h1>
-  <p class="muted">Comparador simple de <b>envíos</b> (tarifas reales vía EasyPost).</p>
+<script>
+  const $ = (s) => document.querySelector(s);
 
-  <div class="card">
-    <div class="row">
-      <div>
-        <label>Origen</label>
-        <input id="from" placeholder="3575 Main Hwy, Miami, FL 33133, US">
-      </div>
-      <div>
-        <label>Destino</label>
-        <input id="to" placeholder="1101 Brickell Ave, Miami, FL 33131, US">
-      </div>
-    </div>
-    <div class="row" style="margin-top:12px">
-      <div>
-        <label>Peso (kg)</label>
-        <input id="kg" type="number" step="0.01" value="1">
-      </div>
-      <div>
-        <label>Dimensiones (cm) opcional</label>
-        <div class="row" style="grid-template-columns:1fr 1fr 1fr;gap:8px">
-          <input id="l" type="number" placeholder="Largo">
-          <input id="w" type="number" placeholder="Ancho">
-          <input id="h" type="number" placeholder="Alto">
-        </div>
-      </div>
-    </div>
-    <div style="margin-top:12px;display:flex;gap:8px;align-items:center">
-      <button id="btn">Consultar tarifas reales</button>
-      <span class="muted">Requiere <code>EASYPOST_API_KEY</code> en Vercel.</span>
-    </div>
-    <div id="err" class="error"></div>
-    <div id="out"></div>
-  </div>
+  async function consultar() {
+    const origin = $('#origen').value.trim();
+    const destination = $('#destino').value.trim();
+    const weight_kg = Number($('#peso').value || 1);
+    const length_cm = Number($('#largo').value || 0);
+    const width_cm  = Number($('#ancho').value || 0);
+    const height_cm = Number($('#alto').value || 0);
 
-  <script>
-    const $ = (id)=>document.getElementById(id);
-    $("btn").onclick = async ()=>{
-      $("err").textContent = ""; $("out").innerHTML = "";
-      const body = {
-        origin: $("from").value,
-        destination: $("to").value,
-        parcel: {
-          weight_kg: Number($("kg").value||0),
-          length_cm: Number($("l").value||0),
-          width_cm: Number($("w").value||0),
-          height_cm: Number($("h").value||0),
-        }
-      };
-      try{
-        const r = await fetch("/api/rates",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-        const txt = await r.text();
-        if(!r.ok) throw new Error(txt);
-        const data = JSON.parse(txt);
-        const rates = data.rates||[];
-        if(!rates.length){$("out").innerHTML = "<p class='muted'>Sin tarifas para esos datos. Prueba direcciones USA→USA y peso > 0.</p>"; return;}
-        let html = "<table><thead><tr><th>Carrier</th><th>Servicio</th><th>Precio</th><th>Días</th></tr></thead><tbody>";
-        for(const x of rates){
-          html += `<tr><td>${x.provider}</td><td>${x.service||""}</td><td>${x.amount} ${x.currency||"USD"}</td><td>${x.est_days ?? "-"}</td></tr>`;
-        }
-        html += "</tbody></table>";
-        $("out").innerHTML = html;
-      }catch(e){ $("err").textContent = e.message || "Error"; }
+    const payload = {
+      origin,
+      destination,
+      parcel: {
+        weight_kg,
+        length_cm,
+        width_cm,
+        height_cm,
+      },
     };
-  </script>
-</body>
-</html>
+
+    const resp = await fetch('/api/rates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+
+    const data = await resp.json();
+    console.log('CLIENT_RESP', data);
+
+    const out = document.getElementById('resultado');
+    out.textContent = resp.ok ? JSON.stringify(data, null, 2)
+                              : JSON.stringify(data, null, 2);
+  }
+
+  document.getElementById('btn').addEventListener('click', consultar);
+</script>
