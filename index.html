@@ -2,126 +2,172 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>AhorraYa</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AhorraYa – Comparador</title>
   <style>
-    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial,sans-serif;margin:0;background:#f7f8fa;color:#111}
-    .wrap{max-width:900px;margin:40px auto;padding:0 16px}
-    .card{background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:20px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
-    h1{margin:0 0 16px 0}
-    .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-    .row3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-    label{font-size:14px;color:#374151;display:block;margin:8px 0 6px}
-    input{width:100%;padding:10px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:14px;background:#fff}
-    button{background:#ef6c00;color:#fff;border:0;border-radius:8px;padding:10px 14px;font-weight:600;cursor:pointer}
-    button:disabled{opacity:.6;cursor:not-allowed}
-    .muted{color:#6b7280;font-size:12px;margin-top:8px}
-    pre{background:#0b1020;color:#e5e7eb;border-radius:8px;padding:12px;overflow:auto}
-    .results{margin-top:16px}
-    .err{color:#b91c1c;white-space:pre-wrap}
+    :root { --bg:#0f1115; --card:#171923; --txt:#e6e8f0; --muted:#a0a3ad; --accent:#ff7a18; }
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial}
+    .wrap{max-width:980px;margin:40px auto;padding:0 16px}
+    h1{margin:0 0 16px;font-weight:700}
+    .card{background:var(--card);border:1px solid #232739;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+    .sec{padding:14px 16px;border-top:1px solid #232739}
+    .sec:first-child{border-top:0;border-radius:14px 14px 0 0}
+    .grid{display:grid;gap:10px}
+    @media (min-width:720px){ .grid{grid-template-columns:1fr 1fr} .grid-4{grid-template-columns:repeat(4,1fr)} }
+    label{font-size:12px;color:var(--muted);display:block;margin:2px 0 6px}
+    input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #2a2f42;background:#121525;color:var(--txt);outline:none}
+    input:focus{border-color:#3d4370;box-shadow:0 0 0 3px rgba(61,67,112,.25)}
+    .row{display:flex;gap:10px;align-items:center}
+    .btn{appearance:none;border:0;border-radius:10px;background:var(--accent);color:#0b0d13;padding:12px 16px;font-weight:700;cursor:pointer}
+    .btn[disabled]{opacity:.6;cursor:progress}
+    .msg{white-space:pre-wrap;background:#0b0d13;color:#ffd9bf;border-radius:10px;padding:12px;border:1px dashed #3b2a1d}
+    table{width:100%;border-collapse:collapse;font-size:14px}
+    th,td{padding:10px;border-bottom:1px solid #232739;text-align:left}
+    th{color:var(--muted);font-weight:600}
+    .pill{padding:2px 8px;border-radius:999px;background:#111523;color:#c9cbff;border:1px solid #2a2f42;font-size:12px}
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>AhorraYa</h1>
     <div class="card">
-      <div class="row">
-        <div>
-          <label>Origen (calle / ciudad / estado / ZIP / país)</label>
-          <input id="origin" placeholder="3575 Main Hwy, Miami, FL 33133, US" />
-        </div>
-        <div>
-          <label>Destino (calle / ciudad / estado / ZIP / país)</label>
-          <input id="destination" placeholder="1101 Brickell Ave, Miami, FL 33131, US" />
-        </div>
-      </div>
-
-      <div class="row" style="margin-top:12px">
-        <div>
-          <label>Peso (kg)</label>
-          <input id="weight" type="number" step="0.01" placeholder="1" />
-        </div>
-        <div class="row3">
+      <form id="form" class="sec">
+        <div class="grid">
           <div>
-            <label>Largo (cm)</label>
-            <input id="len" type="number" step="0.1" placeholder="23" />
+            <label>Origen (calle / ciudad / estado / ZIP / país)</label>
+            <input id="origin" placeholder="20102 NW 27th Cir, Miami Gardens, FL 33056, US"
+                   value="20102 NW 27th Cir, Miami Gardens, FL 33056, US" />
           </div>
           <div>
-            <label>Ancho (cm)</label>
-            <input id="wid" type="number" step="0.1" placeholder="23" />
-          </div>
-          <div>
-            <label>Alto (cm)</label>
-            <input id="hei" type="number" step="0.1" placeholder="21" />
+            <label>Destino (calle / ciudad / estado / ZIP / país)</label>
+            <input id="dest" placeholder="1101 Brickell Ave, Miami, FL 33131, US"
+                   value="1101 Brickell Ave, Miami, FL 33131, US" />
           </div>
         </div>
-      </div>
 
-      <div style="margin-top:16px;display:flex;gap:12px;align-items:center">
-        <button id="btn">Consultar tarifas reales</button>
-        <span id="note" class="muted"></span>
-      </div>
+        <div class="grid" style="margin-top:10px">
+          <div>
+            <label>Peso (kg)</label>
+            <input id="w" type="number" step="0.01" min="0.01" value="2.5" />
+          </div>
+          <div class="grid-4">
+            <div>
+              <label>Largo (cm)</label>
+              <input id="l" type="number" step="0.1" min="1" value="30" />
+            </div>
+            <div>
+              <label>Ancho (cm)</label>
+              <input id="b" type="number" step="0.1" min="1" value="20" />
+            </div>
+            <div>
+              <label>Alto (cm)</label>
+              <input id="h" type="number" step="0.1" min="1" value="10" />
+            </div>
+            <div class="row" style="align-self:end;justify-content:flex-end">
+              <button id="go" class="btn" type="submit">Consultar tarifas reales</button>
+            </div>
+          </div>
+        </div>
+      </form>
 
-      <div class="results">
-        <div id="error" class="err"></div>
-        <pre id="out" style="display:none"></pre>
+      <div id="panel" class="sec">
+        <div id="status" class="msg" style="display:none"></div>
+        <div style="overflow:auto">
+          <table id="tbl" style="display:none">
+            <thead>
+              <tr>
+                <th>Carrier</th>
+                <th>Servicio</th>
+                <th>Precio</th>
+                <th>Días</th>
+                <th>Entrega</th>
+                <th class="pill">modo</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
 
-  <script>
-    const $ = (id) => document.getElementById(id);
-    const btn = $('btn'), out = $('out'), err = $('error'), note = $('note');
+<script>
+const $ = (id) => document.getElementById(id);
 
-    async function call() {
-      err.textContent = '';
-      out.style.display = 'none';
-      out.textContent = '';
+const fmtCurrency = (n, c = "USD") =>
+  new Intl.NumberFormat("en-US", { style: "currency", currency: c }).format(Number(n || 0));
 
-      const origin = $('origin').value.trim();
-      const destination = $('destination').value.trim();
-      const weight_kg = Number($('weight').value || 0.1);
-      const length_cm = Number($('len').value || 0);
-      const width_cm  = Number($('wid').value || 0);
-      const height_cm = Number($('hei').value || 0);
+const showMsg = (text) => {
+  const box = $("status");
+  box.textContent = text;
+  box.style.display = "block";
+  $("tbl").style.display = "none";
+};
 
-      if (!origin || !destination) {
-        err.textContent = 'Origen y destino son obligatorios.';
-        return;
-      }
+const showRates = (rates) => {
+  const tbl = $("tbl");
+  const tbody = tbl.querySelector("tbody");
+  tbody.innerHTML = "";
 
-      btn.disabled = true; btn.textContent = 'Consultando...';
-      note.textContent = '';
+  if (!rates?.length) {
+    showMsg("No se recibieron tarifas. Prueba con otras dimensiones/direcciones.");
+    return;
+  }
+  $("status").style.display = "none";
+  tbl.style.display = "table";
 
-      try {
-        const resp = await fetch('/api/rates', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            origin, destination,
-            parcel: { weight_kg, length_cm, width_cm, height_cm }
-          })
-        });
+  // ordenar por precio
+  rates.sort((a, b) => Number(a.rate) - Number(b.rate));
 
-        const data = await resp.json().catch(() => ({}));
-        if (!resp.ok) {
-          err.textContent = JSON.stringify(data, null, 2);
-        } else {
-          // Si EasyPost responde con {rates:[...]} lo mostramos; si no, todo el objeto.
-          const printable = data.rates || data;
-          out.textContent = JSON.stringify(printable, null, 2);
-          out.style.display = 'block';
-        }
-      } catch (e) {
-        err.textContent = String(e);
-      } finally {
-        btn.disabled = false; btn.textContent = 'Consultar tarifas reales';
-      }
+  for (const r of rates) {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${r.carrier || "-"}</td>
+      <td>${r.service || "-"}</td>
+      <td><strong>${fmtCurrency(r.rate, r.currency || "USD")}</strong></td>
+      <td>${r.delivery_days ?? "—"}</td>
+      <td>${r.delivery_date ? new Date(r.delivery_date).toLocaleDateString() : "—"}</td>
+      <td><span class="pill">${(r.mode || "test").toUpperCase()}</span></td>
+    `;
+    tbody.appendChild(tr);
+  }
+};
+
+$("form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const btn = $("go");
+  btn.disabled = true;
+
+  try {
+    const origin = $("origin").value.trim();
+    const destination = $("dest").value.trim();
+    const parcel = {
+      weight_kg: Number($("w").value),
+      length_cm: Number($("l").value),
+      width_cm: Number($("b").value),
+      height_cm: Number($("h").value),
+    };
+
+    const resp = await fetch("/api/rates", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ origin, destination, parcel }),
+    });
+
+    const data = await resp.json();
+
+    if (!resp.ok) {
+      showMsg(JSON.stringify(data, null, 2));
+    } else {
+      showRates(data);
     }
-
-    btn.addEventListener('click', call);
-    // Para depurar “pantalla blanca”: log de errores JS en consola
-    window.addEventListener('error', e => { console.error('JS Error:', e.message); });
-  </script>
+  } catch (err) {
+    showMsg(String(err));
+  } finally {
+    btn.disabled = false;
+  }
+});
+</script>
 </body>
 </html>
+
