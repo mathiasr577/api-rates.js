@@ -1,173 +1,210 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>AhorraYa – Comparador</title>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>AhorraYa</title>
   <style>
-    :root { --bg:#0f1115; --card:#171923; --txt:#e6e8f0; --muted:#a0a3ad; --accent:#ff7a18; }
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--txt);font:16px/1.45 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial}
-    .wrap{max-width:980px;margin:40px auto;padding:0 16px}
-    h1{margin:0 0 16px;font-weight:700}
-    .card{background:var(--card);border:1px solid #232739;border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
-    .sec{padding:14px 16px;border-top:1px solid #232739}
-    .sec:first-child{border-top:0;border-radius:14px 14px 0 0}
-    .grid{display:grid;gap:10px}
-    @media (min-width:720px){ .grid{grid-template-columns:1fr 1fr} .grid-4{grid-template-columns:repeat(4,1fr)} }
-    label{font-size:12px;color:var(--muted);display:block;margin:2px 0 6px}
-    input{width:100%;padding:10px 12px;border-radius:10px;border:1px solid #2a2f42;background:#121525;color:var(--txt);outline:none}
-    input:focus{border-color:#3d4370;box-shadow:0 0 0 3px rgba(61,67,112,.25)}
-    .row{display:flex;gap:10px;align-items:center}
-    .btn{appearance:none;border:0;border-radius:10px;background:var(--accent);color:#0b0d13;padding:12px 16px;font-weight:700;cursor:pointer}
-    .btn[disabled]{opacity:.6;cursor:progress}
-    .msg{white-space:pre-wrap;background:#0b0d13;color:#ffd9bf;border-radius:10px;padding:12px;border:1px dashed #3b2a1d}
-    table{width:100%;border-collapse:collapse;font-size:14px}
-    th,td{padding:10px;border-bottom:1px solid #232739;text-align:left}
-    th{color:var(--muted);font-weight:600}
-    .pill{padding:2px 8px;border-radius:999px;background:#111523;color:#c9cbff;border:1px solid #2a2f42;font-size:12px}
+    :root{
+      --bg:#0b0f14; --card:#121822; --muted:#91a3b0; --text:#e8f0f6; --accent:#ff7a00;
+      --pill:#1f2b3a; --ok:#16a34a; --err:#ef4444; --btn:#ff7a00; --btnText:#0b0f14;
+    }
+    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font:15px/1.4 system-ui,Segoe UI,Roboto,Helvetica,Arial}
+    .wrap{max-width:1100px;margin:40px auto;padding:0 16px}
+    h1{font-size:28px;margin:0 0 18px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+    .input, .btn{width:100%;border:1px solid #243245;border-radius:10px;padding:12px 14px;background:#0e1420;color:var(--text)}
+    .btn{background:var(--btn);color:var(--btnText);font-weight:700;border:none;cursor:pointer}
+    .btn:disabled{opacity:.5;cursor:not-allowed}
+    .card{background:var(--card);border:1px solid #1e2a3a;border-radius:14px;padding:14px 14px;display:flex;align-items:center;gap:14px}
+    .list{margin-top:16px;display:grid;gap:10px}
+    .logo{width:42px;height:42px;border-radius:10px;display:grid;place-items:center;color:#fff;font-weight:800;letter-spacing:.5px}
+    .logo.usps{background:#0a3d91}
+    .logo.ups{background:#5a3a1a}
+    .logo.fedex{background:#4d2d8a}
+    .logo.dhl{background:#d81e06}
+    .logo.other{background:#2b3b52}
+    .price{font-size:20px;font-weight:800}
+    .sub{color:var(--muted);font-size:13px}
+    .row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .badges{display:flex;gap:8px;flex-wrap:wrap}
+    .pill{background:var(--pill);border:1px solid #2d3c52;color:#c8d7e3;font-size:12px;padding:4px 8px;border-radius:999px}
+    .pill.test{color:#ffb4a3;border-color:#573022;background:#2a1a14}
+    .pill.prod{color:#9ff3b3;border-color:#1f5e3b;background:#0f2619}
+    .err{margin-top:12px;color:#ffb4b4}
+    .hr{height:1px;background:#1d2836;margin:16px 0}
+    @media (max-width:860px){ .grid{grid-template-columns:1fr} .row{flex-direction:column;align-items:flex-start} }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>AhorraYa</h1>
-    <div class="card">
-      <form id="form" class="sec">
-        <div class="grid">
-          <div>
-            <label>Origen (calle / ciudad / estado / ZIP / país)</label>
-            <input id="origin" placeholder="20102 NW 27th Cir, Miami Gardens, FL 33056, US"
-                   value="20102 NW 27th Cir, Miami Gardens, FL 33056, US" />
-          </div>
-          <div>
-            <label>Destino (calle / ciudad / estado / ZIP / país)</label>
-            <input id="dest" placeholder="1101 Brickell Ave, Miami, FL 33131, US"
-                   value="1101 Brickell Ave, Miami, FL 33131, US" />
-          </div>
-        </div>
 
-        <div class="grid" style="margin-top:10px">
-          <div>
-            <label>Peso (kg)</label>
-            <input id="w" type="number" step="0.01" min="0.01" value="2.5" />
-          </div>
-          <div class="grid-4">
-            <div>
-              <label>Largo (cm)</label>
-              <input id="l" type="number" step="0.1" min="1" value="30" />
-            </div>
-            <div>
-              <label>Ancho (cm)</label>
-              <input id="b" type="number" step="0.1" min="1" value="20" />
-            </div>
-            <div>
-              <label>Alto (cm)</label>
-              <input id="h" type="number" step="0.1" min="1" value="10" />
-            </div>
-            <div class="row" style="align-self:end;justify-content:flex-end">
-              <button id="go" class="btn" type="submit">Consultar tarifas reales</button>
-            </div>
-          </div>
-        </div>
-      </form>
-
-      <div id="panel" class="sec">
-        <div id="status" class="msg" style="display:none"></div>
-        <div style="overflow:auto">
-          <table id="tbl" style="display:none">
-            <thead>
-              <tr>
-                <th>Carrier</th>
-                <th>Servicio</th>
-                <th>Precio</th>
-                <th>Días</th>
-                <th>Entrega</th>
-                <th class="pill">modo</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
+    <div class="grid" style="margin-bottom:10px">
+      <input id="origin" class="input" placeholder="Origen (calle, ciudad, estado, ZIP, país)" value="20102 NW 27th Cir, Miami Gardens, FL 33056, US"/>
+      <input id="dest"   class="input" placeholder="Destino (calle, ciudad, estado, ZIP, país)" value="1101 Brickell Ave, Miami, FL 33131, US"/>
+      <input id="kg"     class="input" placeholder="Peso (kg)" value="2.5"/>
+      <div class="grid" style="grid-template-columns:1fr 1fr 1fr;gap:10px">
+        <input id="l" class="input" placeholder="Largo (cm)" value="30"/>
+        <input id="w" class="input" placeholder="Ancho (cm)" value="20"/>
+        <input id="h" class="input" placeholder="Alto (cm)"  value="10"/>
       </div>
     </div>
+
+    <button id="go" class="btn">Consultar tarifas reales</button>
+    <div id="error" class="err"></div>
+
+    <div class="hr"></div>
+
+    <div id="list" class="list"></div>
   </div>
 
-<script>
-const $ = (id) => document.getElementById(id);
-
-const fmtCurrency = (n, c = "USD") =>
-  new Intl.NumberFormat("en-US", { style: "currency", currency: c }).format(Number(n || 0));
-
-const showMsg = (text) => {
-  const box = $("status");
-  box.textContent = text;
-  box.style.display = "block";
-  $("tbl").style.display = "none";
-};
-
-const showRates = (rates) => {
-  const tbl = $("tbl");
-  const tbody = tbl.querySelector("tbody");
-  tbody.innerHTML = "";
-
-  if (!rates?.length) {
-    showMsg("No se recibieron tarifas. Prueba con otras dimensiones/direcciones.");
-    return;
-  }
-  $("status").style.display = "none";
-  tbl.style.display = "table";
-
-  // ordenar por precio
-  rates.sort((a, b) => Number(a.rate) - Number(b.rate));
-
-  for (const r of rates) {
-    const tr = document.createElement("tr");
-    tr.innerHTML = `
-      <td>${r.carrier || "-"}</td>
-      <td>${r.service || "-"}</td>
-      <td><strong>${fmtCurrency(r.rate, r.currency || "USD")}</strong></td>
-      <td>${r.delivery_days ?? "—"}</td>
-      <td>${r.delivery_date ? new Date(r.delivery_date).toLocaleDateString() : "—"}</td>
-      <td><span class="pill">${(r.mode || "test").toUpperCase()}</span></td>
-    `;
-    tbody.appendChild(tr);
-  }
-};
-
-$("form").addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const btn = $("go");
-  btn.disabled = true;
-
-  try {
-    const origin = $("origin").value.trim();
-    const destination = $("dest").value.trim();
-    const parcel = {
-      weight_kg: Number($("w").value),
-      length_cm: Number($("l").value),
-      width_cm: Number($("b").value),
-      height_cm: Number($("h").value),
+  <script>
+    // --- Helpers ---
+    const $ = sel => document.querySelector(sel);
+    const fmtMoney = (n, c='USD') => Number(n).toLocaleString('en-US',{style:'currency',currency:c});
+    const brandClass = (carrier) => {
+      const c = (carrier||'').toUpperCase();
+      if (c==='USPS') return 'usps';
+      if (c==='UPS' || c==='UPSDAP') return 'ups';
+      if (c==='FEDEX' || c==='FEDEXDEFAULT') return 'fedex';
+      if (c==='DHL'  || c==='DHL ECOMMERCE') return 'dhl';
+      return 'other';
+    };
+    const brandText = (carrier) => {
+      const m = { 'UPSDAP':'UPS', 'FedExDefault':'FedEx' };
+      return (m[carrier] || carrier || 'Carrier');
+    };
+    const etaText = (r) => {
+      if (r.delivery_date) {
+        try { return new Date(r.delivery_date).toLocaleDateString(); } catch {}
+      }
+      return (r.delivery_days ?? '—');
     };
 
-    const resp = await fetch("/api/rates", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ origin, destination, parcel }),
+    // --- UI state ---
+    const btn = $('#go');
+    const list = $('#list');
+    const errorBox = $('#error');
+
+    btn.addEventListener('click', async () => {
+      errorBox.textContent = '';
+      list.innerHTML = '';
+      btn.disabled = true; btn.textContent = 'Consultando...';
+
+      const origin = $('#origin').value.trim();
+      const destination = $('#dest').value.trim();
+      const parcel = {
+        weight_kg: Number($('#kg').value) || 0.1,
+        length_cm: Number($('#l').value)  || 1,
+        width_cm:  Number($('#w').value)  || 1,
+        height_cm: Number($('#h').value)  || 1,
+      };
+
+      try {
+        const r = await fetch('/api/rates', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ origin, destination, parcel })
+        });
+        const data = await r.json();
+
+        if (!r.ok) {
+          throw new Error((data?.details?.message || data?.error || r.statusText) + '');
+        }
+
+        renderRates(Array.isArray(data) ? data : []);
+      } catch(err) {
+        errorBox.textContent = err.message || 'Error consultando tarifas';
+      } finally {
+        btn.disabled = false; btn.textContent = 'Consultar tarifas reales';
+      }
     });
 
-    const data = await resp.json();
+    function renderRates(rates){
+      list.innerHTML = '';
 
-    if (!resp.ok) {
-      showMsg(JSON.stringify(data, null, 2));
-    } else {
-      showRates(data);
+      if (!rates.length) {
+        list.innerHTML = `<div class="sub">Sin resultados.</div>`;
+        return;
+      }
+
+      // Normaliza nombres y ordena por precio asc
+      for (const r of rates) {
+        if (r.carrier === 'UPSDAP') r.carrier = 'UPS';
+        if (r.carrier === 'FedExDefault') r.carrier = 'FedEx';
+      }
+      rates.sort((a,b) => Number(a.rate) - Number(b.rate));
+
+      for (const r of rates) {
+        const card = document.createElement('div');
+        card.className = 'card';
+
+        const logo = document.createElement('div');
+        logo.className = `logo ${brandClass(r.carrier)}`;
+        logo.textContent = (brandText(r.carrier)||'?').slice(0,4).toUpperCase();
+
+        const center = document.createElement('div');
+        center.style.flex = '1';
+        center.innerHTML = `
+          <div class="row">
+            <div>
+              <div style="font-weight:700">${brandText(r.carrier)} • ${r.service || '-'}</div>
+              <div class="sub">Entrega: ${etaText(r)}</div>
+            </div>
+            <div class="price">${fmtMoney(r.rate, r.currency || 'USD')}</div>
+          </div>
+          <div class="badges" style="margin-top:8px">
+            <span class="pill ${((r.mode||'test')==='production')?'prod':'test'}">${(r.mode||'test').toUpperCase()}</span>
+            ${r.delivery_date ? `<span class="pill">ETA ${new Date(r.delivery_date).toLocaleDateString()}</span>` : ``}
+            ${r.delivery_days ? `<span class="pill">${r.delivery_days} días</span>` : ``}
+          </div>
+        `;
+
+        const action = document.createElement('div');
+        const buyBtn = document.createElement('button');
+        buyBtn.className = 'btn';
+        buyBtn.textContent = 'Crear envío';
+        buyBtn.style.minWidth = '140px';
+        buyBtn.addEventListener('click', () => buyLabel(buyBtn, r.shipment_id, r.id));
+        action.appendChild(buyBtn);
+
+        card.append(logo, center, action);
+        list.appendChild(card);
+      }
     }
-  } catch (err) {
-    showMsg(String(err));
-  } finally {
-    btn.disabled = false;
-  }
-});
-</script>
+
+    async function buyLabel(btn, shipmentId, rateId){
+      btn.disabled = true;
+      const txt = btn.textContent;
+      btn.textContent = 'Creando...';
+
+      try {
+        const r = await fetch('/api/buy', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ shipment_id: shipmentId, rate_id: rateId })
+        });
+        const data = await r.json();
+        if (!r.ok) throw new Error(data?.error || data?.message || 'No se pudo comprar');
+
+        // Abre la etiqueta (PDF/PNG) en nueva pestaña si existe
+        if (data.label_url) {
+          window.open(data.label_url, '_blank');
+        }
+
+        // Feedback
+        btn.textContent = 'Listo ✅';
+        btn.style.background = 'var(--ok)';
+        setTimeout(() => { btn.textContent = txt; btn.style.background = 'var(--btn)'; btn.disabled = false; }, 2200);
+      } catch(err){
+        btn.textContent = 'Error';
+        btn.style.background = 'var(--err)';
+        alert('Error: ' + (err.message||''));
+        setTimeout(() => { btn.textContent = txt; btn.style.background = 'var(--btn)'; btn.disabled = false; }, 2000);
+      }
+    }
+  </script>
 </body>
 </html>
 
