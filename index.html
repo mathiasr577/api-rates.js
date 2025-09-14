@@ -33,10 +33,8 @@
     .price{margin-left:auto;font-weight:900}
     .pill{font-size:12px;background:var(--pill);border:1px solid #2a3347;border-radius:999px;padding:4px 8px;color:var(--muted)}
     .err{color:#fda4af;white-space:pre-wrap;font-family:ui-monospace,Consolas,monospace}
-    @media (max-width:900px){
-      .two{grid-template-columns:1fr}
-      .four{grid-template-columns:repeat(2,1fr)}
-    }
+    .hide{display:none}
+    @media (max-width:900px){.two{grid-template-columns:1fr}.four{grid-template-columns:repeat(2,1fr)}}
   </style>
 </head>
 <body>
@@ -53,39 +51,22 @@
             <input id="oStreet" placeholder="20102 NW 27th Cir" value="20102 NW 27th Cir">
           </div>
           <div>
-            <label>Ciudad</label>
-            <input id="oCity" placeholder="Miami Gardens" value="Miami Gardens">
-          </div>
-          <div>
-            <label>Estado</label>
-            <select id="oState">
-              <option value="">—</option>
-              <option value="AL">AL</option><option value="AK">AK</option><option value="AZ">AZ</option>
-              <option value="AR">AR</option><option value="CA">CA</option><option value="CO">CO</option>
-              <option value="CT">CT</option><option value="DC">DC</option><option value="DE">DE</option>
-              <option value="FL" selected>FL</option><option value="GA">GA</option><option value="HI">HI</option>
-              <option value="ID">ID</option><option value="IL">IL</option><option value="IN">IN</option>
-              <option value="IA">IA</option><option value="KS">KS</option><option value="KY">KY</option>
-              <option value="LA">LA</option><option value="ME">ME</option><option value="MD">MD</option>
-              <option value="MA">MA</option><option value="MI">MI</option><option value="MN">MN</option>
-              <option value="MS">MS</option><option value="MO">MO</option><option value="MT">MT</option>
-              <option value="NE">NE</option><option value="NV">NV</option><option value="NH">NH</option>
-              <option value="NJ">NJ</option><option value="NM">NM</option><option value="NY">NY</option>
-              <option value="NC">NC</option><option value="ND">ND</option><option value="OH">OH</option>
-              <option value="OK">OK</option><option value="OR">OR</option><option value="PA">PA</option>
-              <option value="RI">RI</option><option value="SC">SC</option><option value="SD">SD</option>
-              <option value="TN">TN</option><option value="TX">TX</option><option value="UT">UT</option>
-              <option value="VT">VT</option><option value="VA">VA</option><option value="WA">WA</option>
-              <option value="WV">WV</option><option value="WI">WI</option><option value="WY">WY</option>
-            </select>
-          </div>
-          <div>
-            <label>ZIP</label>
-            <input id="oZip" placeholder="33056" value="33056">
-          </div>
-          <div>
             <label>País</label>
-            <select id="oCountry"><option value="US" selected>US</option></select>
+            <select id="oCountry"></select>
+          </div>
+          <div>
+            <label>Estado / Provincia</label>
+            <select id="oState"></select>
+            <input id="oStateText" class="hide" placeholder="Provincia/Estado (texto)">
+          </div>
+          <div>
+            <label>Ciudad</label>
+            <input id="oCity" list="oCityList" placeholder="Miami Gardens" value="Miami Gardens">
+            <datalist id="oCityList"></datalist>
+          </div>
+          <div>
+            <label>ZIP / Código postal</label>
+            <input id="oZip" placeholder="33056" value="33056">
           </div>
         </div>
       </div>
@@ -98,39 +79,22 @@
             <input id="dStreet" placeholder="1101 Brickell Ave" value="1101 Brickell Ave">
           </div>
           <div>
-            <label>Ciudad</label>
-            <input id="dCity" placeholder="Miami" value="Miami">
-          </div>
-          <div>
-            <label>Estado</label>
-            <select id="dState">
-              <option value="">—</option>
-              <option value="AL">AL</option><option value="AK">AK</option><option value="AZ">AZ</option>
-              <option value="AR">AR</option><option value="CA">CA</option><option value="CO">CO</option>
-              <option value="CT">CT</option><option value="DC">DC</option><option value="DE">DE</option>
-              <option value="FL" selected>FL</option><option value="GA">GA</option><option value="HI">HI</option>
-              <option value="ID">ID</option><option value="IL">IL</option><option value="IN">IN</option>
-              <option value="IA">IA</option><option value="KS">KS</option><option value="KY">KY</option>
-              <option value="LA">LA</option><option value="ME">ME</option><option value="MD">MD</option>
-              <option value="MA">MA</option><option value="MI">MI</option><option value="MN">MN</option>
-              <option value="MS">MS</option><option value="MO">MO</option><option value="MT">MT</option>
-              <option value="NE">NE</option><option value="NV">NV</option><option value="NH">NH</option>
-              <option value="NJ">NJ</option><option value="NM">NM</option><option value="NY">NY</option>
-              <option value="NC">NC</option><option value="ND">ND</option><option value="OH">OH</option>
-              <option value="OK">OK</option><option value="OR">OR</option><option value="PA">PA</option>
-              <option value="RI">RI</option><option value="SC">SC</option><option value="SD">SD</option>
-              <option value="TN">TN</option><option value="TX">TX</option><option value="UT">UT</option>
-              <option value="VT">VT</option><option value="VA">VA</option><option value="WA">WA</option>
-              <option value="WV">WV</option><option value="WI">WI</option><option value="WY">WY</option>
-            </select>
-          </div>
-          <div>
-            <label>ZIP</label>
-            <input id="dZip" placeholder="33131" value="33131">
-          </div>
-          <div>
             <label>País</label>
-            <select id="dCountry"><option value="US" selected>US</option></select>
+            <select id="dCountry"></select>
+          </div>
+          <div>
+            <label>Estado / Provincia</label>
+            <select id="dState"></select>
+            <input id="dStateText" class="hide" placeholder="Provincia/Estado (texto)">
+          </div>
+          <div>
+            <label>Ciudad</label>
+            <input id="dCity" list="dCityList" placeholder="Miami" value="Miami">
+            <datalist id="dCityList"></datalist>
+          </div>
+          <div>
+            <label>ZIP / Código postal</label>
+            <input id="dZip" placeholder="33131" value="33131">
           </div>
         </div>
       </div>
@@ -155,18 +119,96 @@
   </div>
 
   <script>
-    const $ = s=>document.querySelector(s);
-    const btn = $('#btn'), results = $('#results'), msg = $('#msg');
+    // ======= Datos: países (ISO-3166), estados/provincias y ciudades sugeridas =======
+    const COUNTRIES = [
+      {code:'US',name:'United States'},
+      {code:'CA',name:'Canada'},
+      {code:'MX',name:'México'},
+      {code:'AR',name:'Argentina'},{code:'BR',name:'Brasil'},{code:'CL',name:'Chile'},
+      {code:'CO',name:'Colombia'},{code:'CR',name:'Costa Rica'},{code:'DO',name:'República Dominicana'},
+      {code:'EC',name:'Ecuador'},{code:'ES',name:'España'},{code:'FR',name:'France'},
+      {code:'DE',name:'Germany'},{code:'GT',name:'Guatemala'},{code:'HN',name:'Honduras'},
+      {code:'IT',name:'Italia'},{code:'NI',name:'Nicaragua'},{code:'PA',name:'Panamá'},
+      {code:'PE',name:'Perú'},{code:'PR',name:'Puerto Rico'},{code:'SV',name:'El Salvador'},
+      {code:'UK',name:'United Kingdom'},{code:'UY',name:'Uruguay'},{code:'VE',name:'Venezuela'}
+    ];
 
-    function addr(prefix){
-      return {
-        street1: $(`#${prefix}Street`).value.trim(),
-        city:    $(`#${prefix}City`).value.trim(),
-        state:   $(`#${prefix}State`).value.trim(),
-        zip:     $(`#${prefix}Zip`).value.trim(),
-        country: $(`#${prefix}Country`).value
-      };
+    const STATES_US = [
+      'AL','AK','AZ','AR','CA','CO','CT','DC','DE','FL','GA','HI','ID','IL','IN','IA','KS','KY','LA','ME','MD','MA','MI','MN','MS','MO','MT','NE','NV','NH','NJ','NM','NY','NC','ND','OH','OK','OR','PA','RI','SC','SD','TN','TX','UT','VT','VA','WA','WV','WI','WY'
+    ];
+    const STATES_CA = ['AB','BC','MB','NB','NL','NS','NT','NU','ON','PE','QC','SK','YT'];
+    const STATES_MX = ['AG','BC','BS','CM','CO','CL','CS','CH','DF','DG','GT','GR','HG','JA','MX','MI','MO','NA','NL','OA','PU','QE','QR','SL','SI','SO','TB','TM','TL','VE','YU','ZA'];
+
+    const STATE_MAP = { US: STATES_US, CA: STATES_CA, MX: STATES_MX };
+
+    // Sugerencias (ejemplos) por estado
+    const CITY_SUGGEST = {
+      US: {
+        FL: ['Miami','Miami Gardens','Hialeah','Orlando','Tampa','Jacksonville'],
+        CA: ['Los Angeles','San Diego','San Francisco','San Jose','Sacramento'],
+        NY: ['New York','Buffalo','Rochester','Syracuse'],
+        TX: ['Houston','Dallas','Austin','San Antonio']
+      },
+      CA: {
+        ON: ['Toronto','Ottawa','Mississauga'], QC:['Montréal','Québec'], BC:['Vancouver','Victoria'],
+      },
+      MX: {
+        JA:['Guadalajara','Zapopan'], DF:['Ciudad de México'], NL:['Monterrey'], PU:['Puebla']
+      }
+    };
+
+    // ======= Helpers UI =======
+    const $ = s=>document.querySelector(s);
+    const byId = id=>document.getElementById(id);
+
+    function fillCountries(sel, def='US'){
+      sel.innerHTML = COUNTRIES.map(c=>`<option value="${c.code}">${c.name}</option>`).join('');
+      sel.value = def;
     }
+
+    function toggle(el, show){ el.classList.toggle('hide', !show); }
+
+    function populateStates(countrySel, stateSel, stateText, cityInput, cityList){
+      const code = countrySel.value;
+      const list = STATE_MAP[code];
+      if(list){
+        // select visible
+        toggle(stateSel, true); toggle(stateText,false);
+        stateSel.innerHTML = `<option value="">—</option>` + list.map(s=>`<option value="${s}">${s}</option>`).join('');
+        stateSel.value = (code==='US'?'FL': (code==='CA'?'ON':'')); // default util
+      }else{
+        // free text visible
+        toggle(stateSel,false); toggle(stateText,true);
+        stateText.value = '';
+      }
+      updateCitySuggestions(code, stateSel, stateText, cityInput, cityList);
+    }
+
+    function updateCitySuggestions(countryCode, stateSel, stateText, cityInput, cityList){
+      const state = STATE_MAP[countryCode] ? stateSel.value : stateText.value.trim().toUpperCase();
+      const arr = CITY_SUGGEST[countryCode]?.[state] || [];
+      cityList.innerHTML = arr.map(c=>`<option value="${c}">`).join('');
+      if(arr.length && !arr.includes(cityInput.value)) cityInput.value = arr[0];
+    }
+
+    // ======= Inicializar selects =======
+    const oCountry = byId('oCountry'), dCountry = byId('dCountry');
+    const oState = byId('oState'), dState = byId('dState');
+    const oStateText = byId('oStateText'), dStateText = byId('dStateText');
+    const oCity = byId('oCity'), dCity = byId('dCity');
+    const oCityList = byId('oCityList'), dCityList = byId('dCityList');
+
+    fillCountries(oCountry,'US'); fillCountries(dCountry,'US');
+    populateStates(oCountry,oState,oStateText,oCity,oCityList);
+    populateStates(dCountry,dState,dStateText,dCity,dCityList);
+
+    oCountry.addEventListener('change',()=>populateStates(oCountry,oState,oStateText,oCity,oCityList));
+    dCountry.addEventListener('change',()=>populateStates(dCountry,dState,dStateText,dCity,dCityList));
+    oState.addEventListener('change',()=>updateCitySuggestions(oCountry.value,oState,oStateText,oCity,oCityList));
+    dState.addEventListener('change',()=>updateCitySuggestions(dCountry.value,dState,dStateText,dCity,dCityList));
+
+    // ======= Lógica de cotización / compra =======
+    const btn = $('#btn'), results = $('#results'), msg = $('#msg');
 
     const carrierLogo = (c)=>
       c?.toLowerCase().startsWith('ups')   ? '<div class="logo ups">UPS</div>' :
@@ -179,22 +221,35 @@
       return d.toLocaleDateString(undefined,{day:'2-digit',month:'2-digit',year:'numeric'});
     }
 
+    function addr(prefix){
+      const country = byId(prefix+'Country').value;
+      const hasSelect = !byId(prefix+'State').classList.contains('hide');
+      const stateVal = hasSelect ? byId(prefix+'State').value : byId(prefix+'StateText').value.trim();
+      return {
+        street1: byId(prefix+'Street').value.trim(),
+        city:    byId(prefix+'City').value.trim(),
+        state:   stateVal,
+        zip:     byId(prefix+'Zip').value.trim(),
+        country
+      };
+    }
+
     async function getRates(){
       msg.textContent=''; results.innerHTML=''; btn.disabled=true;
       try{
         const origin = addr('o'), destination = addr('d');
-        const required = (a)=>a.street1 && a.city && a.state && a.zip;
+        const required = a=>a.street1 && a.city && a.zip && a.country && a.state;
         if(!required(origin) || !required(destination)){
-          msg.textContent='Completa calle, ciudad, estado y ZIP en origen y destino.';
+          msg.textContent='Completa calle, ciudad, estado/provincia, ZIP y país en origen y destino.';
           btn.disabled=false; return;
         }
         const payload = {
           origin, destination,
           parcel:{
-            weight_kg: Number($('#w').value)||0.1,
-            length_cm: Number($('#l').value)||0,
-            width_cm:  Number($('#an').value)||0,
-            height_cm: Number($('#al').value)||0
+            weight_kg: Number(byId('w').value)||0.1,
+            length_cm: Number(byId('l').value)||0,
+            width_cm:  Number(byId('an').value)||0,
+            height_cm: Number(byId('al').value)||0
           }
         };
         const r = await fetch('/api/rates',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
@@ -205,7 +260,7 @@
           const eta = rate.est_delivery_date ? `ETA ${niceDate(rate.est_delivery_date)}` : '—';
           return `
             <div class="card">
-              ${carrierLogo(rate.carrier)}
+              ${carriersToLogo(rate.carrier)}
               <div>
                 <div class="svc">${rate.carrier} · ${rate.service}</div>
                 <div style="display:flex;gap:8px;align-items:center;margin-top:4px">
@@ -223,6 +278,9 @@
       finally{ btn.disabled=false; }
     }
 
+    // alias para logo
+    function carriersToLogo(c){ return carrierLogo(c); }
+
     async function buy(shipment_id, rate_id){
       try{
         const r = await fetch('/api/buy',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({shipment_id, rate_id})});
@@ -233,7 +291,7 @@
       }catch(e){ alert('Error al crear envío:\n'+(e.message||e)); }
     }
 
-    btn.addEventListener('click', getRates);
+    byId('btn').addEventListener('click', getRates);
   </script>
 </body>
 </html>
