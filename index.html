@@ -7,68 +7,136 @@
   <style>
     :root{
       --bg:#0f1115;--panel:#161a22;--muted:#8a93a6;--text:#e6e9f2;--brand:#ff7a00;--pill:#22293a;--ok:#10b981;
+      --field:#0f1320;--border:#1f2532;
     }
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
+    *{box-sizing:border-box}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif}
     .wrap{max-width:1120px;margin:32px auto;padding:0 16px}
-    h1{font-size:28px;margin:0 0 20px}
+    h1{font-size:34px;margin:0 0 18px;font-weight:900}
+    h2{font-size:14px;margin:0 0 8px;color:var(--muted);font-weight:600;letter-spacing:.02em}
     .grid{display:grid;gap:12px}
-    .panel{background:var(--panel);border:1px solid #1f2532;border-radius:12px;padding:16px}
     .two{grid-template-columns:1fr 1fr}
     .four{grid-template-columns:repeat(4,1fr)}
+    .panel{background:var(--panel);border:1px solid var(--border);border-radius:12px;padding:16px}
     label{font-size:12px;color:var(--muted);margin-bottom:6px;display:block}
-    input,select{width:100%;background:#0f1320;border:1px solid #1f2532;color:var(--text);padding:10px 12px;border-radius:10px;outline:none}
+    input,select{width:100%;background:var(--field);border:1px solid var(--border);color:var(--text);padding:10px 12px;border-radius:10px;outline:none}
     input:focus,select:focus{border-color:#334155}
     .row{display:flex;gap:12px;align-items:end;flex-wrap:wrap}
-    .btn{background:var(--brand);color:#101114;border:0;border-radius:10px;padding:12px 16px;font-weight:700;cursor:pointer}
+    .btn{background:var(--brand);color:#101114;border:0;border-radius:10px;padding:12px 16px;font-weight:800;cursor:pointer}
     .btn:disabled{opacity:.5;cursor:not-allowed}
     .results{margin-top:16px}
-    .card{display:flex;align-items:center;gap:16px;padding:14px 16px;border:1px solid #1f2532;background:#121723;border-radius:12px}
+    .card{display:flex;align-items:center;gap:16px;padding:14px 16px;border:1px solid var(--border);background:#121723;border-radius:12px}
     .card + .card{margin-top:10px}
     .logo{width:36px;height:36px;border-radius:999px;display:grid;place-items:center;font-weight:800}
-    .usps{background:#224;}.ups{background:#432;}.fedex{background:#242}.usps,.ups,.fedex{color:#fff}
-    .svc{font-weight:600}
-    .price{margin-left:auto;font-weight:800}
+    .usps{background:#224;color:#fff}.ups{background:#532;color:#fff}.fedex{background:#242;color:#fff}
+    .svc{font-weight:700}
+    .price{margin-left:auto;font-weight:900}
     .pill{font-size:12px;background:var(--pill);border:1px solid #2a3347;border-radius:999px;padding:4px 8px;color:var(--muted)}
-    .ok{color:var(--ok)}
     .err{color:#fda4af;white-space:pre-wrap;font-family:ui-monospace,Consolas,monospace}
+    @media (max-width:900px){
+      .two{grid-template-columns:1fr}
+      .four{grid-template-columns:repeat(2,1fr)}
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>AhorraYa</h1>
 
-    <!-- DIRECCIONES -->
+    <!-- ORIGEN / DESTINO -->
     <div class="grid two">
       <div class="panel">
-        <label>Origen</label>
+        <h2>Origen</h2>
         <div class="grid four">
-          <div><label>Calle</label><input id="oStreet" placeholder="20102 NW 27th Cir"></div>
-          <div><label>Ciudad</label><input id="oCity" placeholder="Miami Gardens"></div>
-          <div><label>Estado</label><input id="oState" maxlength="2" placeholder="FL"></div>
-          <div><label>ZIP</label><input id="oZip" placeholder="33056"></div>
-        </div>
-        <div style="margin-top:10px;width:140px">
-          <label>País</label>
-          <select id="oCountry"><option value="US" selected>US</option></select>
+          <div style="grid-column: span 2">
+            <label>Calle</label>
+            <input id="oStreet" placeholder="20102 NW 27th Cir" value="20102 NW 27th Cir">
+          </div>
+          <div>
+            <label>Ciudad</label>
+            <input id="oCity" placeholder="Miami Gardens" value="Miami Gardens">
+          </div>
+          <div>
+            <label>Estado</label>
+            <select id="oState">
+              <option value="">—</option>
+              <option value="AL">AL</option><option value="AK">AK</option><option value="AZ">AZ</option>
+              <option value="AR">AR</option><option value="CA">CA</option><option value="CO">CO</option>
+              <option value="CT">CT</option><option value="DC">DC</option><option value="DE">DE</option>
+              <option value="FL" selected>FL</option><option value="GA">GA</option><option value="HI">HI</option>
+              <option value="ID">ID</option><option value="IL">IL</option><option value="IN">IN</option>
+              <option value="IA">IA</option><option value="KS">KS</option><option value="KY">KY</option>
+              <option value="LA">LA</option><option value="ME">ME</option><option value="MD">MD</option>
+              <option value="MA">MA</option><option value="MI">MI</option><option value="MN">MN</option>
+              <option value="MS">MS</option><option value="MO">MO</option><option value="MT">MT</option>
+              <option value="NE">NE</option><option value="NV">NV</option><option value="NH">NH</option>
+              <option value="NJ">NJ</option><option value="NM">NM</option><option value="NY">NY</option>
+              <option value="NC">NC</option><option value="ND">ND</option><option value="OH">OH</option>
+              <option value="OK">OK</option><option value="OR">OR</option><option value="PA">PA</option>
+              <option value="RI">RI</option><option value="SC">SC</option><option value="SD">SD</option>
+              <option value="TN">TN</option><option value="TX">TX</option><option value="UT">UT</option>
+              <option value="VT">VT</option><option value="VA">VA</option><option value="WA">WA</option>
+              <option value="WV">WV</option><option value="WI">WI</option><option value="WY">WY</option>
+            </select>
+          </div>
+          <div>
+            <label>ZIP</label>
+            <input id="oZip" placeholder="33056" value="33056">
+          </div>
+          <div>
+            <label>País</label>
+            <select id="oCountry"><option value="US" selected>US</option></select>
+          </div>
         </div>
       </div>
 
       <div class="panel">
-        <label>Destino</label>
+        <h2>Destino</h2>
         <div class="grid four">
-          <div><label>Calle</label><input id="dStreet" placeholder="1101 Brickell Ave"></div>
-          <div><label>Ciudad</label><input id="dCity" placeholder="Miami"></div>
-          <div><label>Estado</label><input id="dState" maxlength="2" placeholder="FL"></div>
-          <div><label>ZIP</label><input id="dZip" placeholder="33131"></div>
-        </div>
-        <div style="margin-top:10px;width:140px">
-          <label>País</label>
-          <select id="dCountry"><option value="US" selected>US</option></select>
+          <div style="grid-column: span 2">
+            <label>Calle</label>
+            <input id="dStreet" placeholder="1101 Brickell Ave" value="1101 Brickell Ave">
+          </div>
+          <div>
+            <label>Ciudad</label>
+            <input id="dCity" placeholder="Miami" value="Miami">
+          </div>
+          <div>
+            <label>Estado</label>
+            <select id="dState">
+              <option value="">—</option>
+              <option value="AL">AL</option><option value="AK">AK</option><option value="AZ">AZ</option>
+              <option value="AR">AR</option><option value="CA">CA</option><option value="CO">CO</option>
+              <option value="CT">CT</option><option value="DC">DC</option><option value="DE">DE</option>
+              <option value="FL" selected>FL</option><option value="GA">GA</option><option value="HI">HI</option>
+              <option value="ID">ID</option><option value="IL">IL</option><option value="IN">IN</option>
+              <option value="IA">IA</option><option value="KS">KS</option><option value="KY">KY</option>
+              <option value="LA">LA</option><option value="ME">ME</option><option value="MD">MD</option>
+              <option value="MA">MA</option><option value="MI">MI</option><option value="MN">MN</option>
+              <option value="MS">MS</option><option value="MO">MO</option><option value="MT">MT</option>
+              <option value="NE">NE</option><option value="NV">NV</option><option value="NH">NH</option>
+              <option value="NJ">NJ</option><option value="NM">NM</option><option value="NY">NY</option>
+              <option value="NC">NC</option><option value="ND">ND</option><option value="OH">OH</option>
+              <option value="OK">OK</option><option value="OR">OR</option><option value="PA">PA</option>
+              <option value="RI">RI</option><option value="SC">SC</option><option value="SD">SD</option>
+              <option value="TN">TN</option><option value="TX">TX</option><option value="UT">UT</option>
+              <option value="VT">VT</option><option value="VA">VA</option><option value="WA">WA</option>
+              <option value="WV">WV</option><option value="WI">WI</option><option value="WY">WY</option>
+            </select>
+          </div>
+          <div>
+            <label>ZIP</label>
+            <input id="dZip" placeholder="33131" value="33131">
+          </div>
+          <div>
+            <label>País</label>
+            <select id="dCountry"><option value="US" selected>US</option></select>
+          </div>
         </div>
       </div>
     </div>
 
-    <!-- PARCEL -->
+    <!-- PAQUETE -->
     <div class="panel" style="margin-top:12px">
       <div class="row">
         <div style="min-width:140px;flex:1">
@@ -90,23 +158,24 @@
     const $ = s=>document.querySelector(s);
     const btn = $('#btn'), results = $('#results'), msg = $('#msg');
 
-    function addr(kind){
+    function addr(prefix){
       return {
-        street1: $(`#${kind}Street`).value.trim(),
-        city:    $(`#${kind}City`).value.trim(),
-        state:   $(`#${kind}State`).value.trim().toUpperCase(),
-        zip:     $(`#${kind}Zip`).value.trim(),
-        country: $(`#${kind}Country`).value
-      }
+        street1: $(`#${prefix}Street`).value.trim(),
+        city:    $(`#${prefix}City`).value.trim(),
+        state:   $(`#${prefix}State`).value.trim(),
+        zip:     $(`#${prefix}Zip`).value.trim(),
+        country: $(`#${prefix}Country`).value
+      };
     }
+
     const carrierLogo = (c)=>
       c?.toLowerCase().startsWith('ups')   ? '<div class="logo ups">UPS</div>' :
       c?.toLowerCase().startsWith('fedex') ? '<div class="logo fedex">FX</div>' :
-                                              '<div class="logo usps">US</div>';
+                                             '<div class="logo usps">US</div>';
 
     function niceDate(iso){
       if(!iso) return '—';
-      const d=new Date(iso); 
+      const d = new Date(iso);
       return d.toLocaleDateString(undefined,{day:'2-digit',month:'2-digit',year:'numeric'});
     }
 
@@ -114,9 +183,10 @@
       msg.textContent=''; results.innerHTML=''; btn.disabled=true;
       try{
         const origin = addr('o'), destination = addr('d');
-        if(!origin.street1||!origin.city||!origin.state||!origin.zip||
-           !destination.street1||!destination.city||!destination.state||!destination.zip){
-          msg.textContent='Completa calle, ciudad, estado y ZIP en origen y destino.'; btn.disabled=false; return;
+        const required = (a)=>a.street1 && a.city && a.state && a.zip;
+        if(!required(origin) || !required(destination)){
+          msg.textContent='Completa calle, ciudad, estado y ZIP en origen y destino.';
+          btn.disabled=false; return;
         }
         const payload = {
           origin, destination,
@@ -139,12 +209,12 @@
               <div>
                 <div class="svc">${rate.carrier} · ${rate.service}</div>
                 <div style="display:flex;gap:8px;align-items:center;margin-top:4px">
-                  <span class="pill">${rate.mode?.toUpperCase()||'TEST'}</span>
+                  <span class="pill">${(rate.mode||'test').toUpperCase()}</span>
                   <span class="pill">${rate.delivery_days ?? '—'} días</span>
                   <span class="pill">${eta}</span>
                 </div>
               </div>
-              <div class="price">$${rate.rate.toFixed(2)}</div>
+              <div class="price">$${Number(rate.rate).toFixed(2)}</div>
               <button class="btn" onclick='buy("${rate.shipment_id}","${rate.rate_id}")'>Crear envío</button>
             </div>`;
         }).join('');
@@ -167,4 +237,3 @@
   </script>
 </body>
 </html>
-
