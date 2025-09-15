@@ -1,179 +1,231 @@
-// /api/rates.js
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AhorraYa – Comparador</title>
+  <style>
+    :root { color-scheme: dark; }
+    body{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;background:#0b0f14;color:#e6edf3;margin:0;padding:24px}
+    h1{margin:0 0 20px 0}
+    .grid{display:grid;gap:18px}
+    .two{grid-template-columns:1fr 1fr}
+    .card{background:#0f1520;border:1px solid #1c2330;border-radius:14px;padding:16px}
+    .row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    label{font-size:13px;color:#9fb0c3;margin-bottom:6px;display:block}
+    input, select{width:100%;background:#0c1220;border:1px solid #243042;color:#e6edf3;border-radius:10px;padding:10px 12px;font-size:14px;outline:none}
+    input:focus,select:focus{border-color:#ff7a00}
+    .btn{background:#ff7a00;border:none;color:#101418;padding:14px 16px;border-radius:12px;font-weight:700;font-size:14px;cursor:pointer;width:100%}
+    .btn:disabled{opacity:.6;cursor:not-allowed}
+    .rates{margin-top:16px}
+    .rate{display:flex;align-items:center;justify-content:space-between;background:#0c1220;border:1px solid #223049;border-radius:12px;padding:12px 14px;margin-top:10px}
+    .left{display:flex;gap:12px;align-items:center}
+    .logo{width:28px;height:28px;border-radius:6px;display:grid;place-items:center;font-size:12px;font-weight:800}
+    .usps{background:#2b6cb0}
+    .ups{background:#6b4f1d}
+    .fedex{background:#5b21b6}
+    .tag{font-size:11px;color:#a6b3c5;border:1px solid #304055;border-radius:999px;padding:2px 8px;margin-left:8px}
+    .price{font-weight:800}
+    pre{background:#0c1220;border:1px dashed #2b3a4f;border-radius:12px;padding:14px;white-space:pre-wrap}
+  </style>
+</head>
+<body>
+  <h1>AhorraYa</h1>
 
-  try {
-    res.setHeader('Cache-Control', 'no-store');
+  <div class="grid two">
+    <!-- ORIGEN -->
+    <div class="card">
+      <h3>Origen</h3>
+      <div class="row">
+        <div>
+          <label>Calle</label>
+          <input id="fromStreet" placeholder="20102 NW 27th Cir" value="20102 NW 27th Cir">
+        </div>
+        <div>
+          <label>Ciudad</label>
+          <input id="fromCity" placeholder="Miami Gardens" value="Miami Gardens">
+        </div>
+        <div>
+          <label>Estado/Provincia</label>
+          <select id="fromState">
+            <option value="FL" selected>Florida</option>
+            <option value="CA">California</option>
+            <option value="NY">New York</option>
+            <option value="TX">Texas</option>
+          </select>
+        </div>
+        <div>
+          <label>ZIP / Código postal</label>
+          <input id="fromZip" placeholder="33056" value="33056">
+        </div>
+      </div>
+      <div class="row" style="grid-template-columns:1fr 1fr">
+        <div>
+          <label>País</label>
+          <select id="fromCountry">
+            <option value="US" selected>Estados Unidos</option>
+            <option value="MX">México</option>
+            <option value="CO">Colombia</option>
+            <option value="CA">Canadá</option>
+          </select>
+        </div>
+      </div>
+    </div>
 
-    const apiKey = process.env.EASYPOST_API_KEY;
-    if (!apiKey) return res.status(500).json({ error: 'Missing EASYPOST_API_KEY' });
+    <!-- DESTINO -->
+    <div class="card">
+      <h3>Destino</h3>
+      <div class="row">
+        <div>
+          <label>Calle</label>
+          <input id="toStreet" placeholder="1101 Brickell Ave" value="1101 Brickell Ave">
+        </div>
+        <div>
+          <label>Ciudad</label>
+          <input id="toCity" placeholder="Miami" value="Miami">
+        </div>
+        <div>
+          <label>Estado/Provincia</label>
+          <select id="toState">
+            <option value="FL" selected>Florida</option>
+            <option value="CA">California</option>
+            <option value="NY">New York</option>
+            <option value="TX">Texas</option>
+          </select>
+        </div>
+        <div>
+          <label>ZIP / Código postal</label>
+          <input id="toZip" placeholder="33131" value="33131">
+        </div>
+      </div>
+      <div class="row" style="grid-template-columns:1fr 1fr">
+        <div>
+          <label>País</label>
+          <select id="toCountry">
+            <option value="US" selected>Estados Unidos</option>
+            <option value="MX">México</option>
+            <option value="CO">Colombia</option>
+            <option value="CA">Canadá</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
 
-    const body = (req.body && typeof req.body === 'string') ? JSON.parse(req.body) : (req.body || {});
+  <!-- PAQUETE + BOTÓN -->
+  <div class="card" style="margin-top:18px">
+    <h3>Paquete</h3>
+    <div class="row">
+      <div>
+        <label>Peso (kg)</label>
+        <input id="weightKg" value="2.5" inputmode="decimal">
+      </div>
+      <div>
+        <label>Largo (cm)</label>
+        <input id="lengthCm" value="30" inputmode="decimal">
+      </div>
+      <div>
+        <label>Ancho (cm)</label>
+        <input id="widthCm" value="20" inputmode="decimal">
+      </div>
+      <div>
+        <label>Alto (cm)</label>
+        <input id="heightCm" value="10" inputmode="decimal">
+      </div>
+    </div>
+    <div style="margin-top:14px">
+      <button id="searchBtn" class="btn">Consultar tarifas reales</button>
+    </div>
 
-    // ---------------------------
-    // Normalizadores práctico-utilitarios
-    // ---------------------------
-    const COUNTRY_MAP = {
-      'united states': 'US', 'usa': 'US', 'eeuu': 'US', 'estados unidos': 'US',
-      'méxico': 'MX', 'mexico': 'MX',
-      'colombia': 'CO',
-      'canadá': 'CA', 'canada': 'CA'
+    <div id="results" class="rates"></div>
+    <pre id="debug" style="display:none"></pre>
+  </div>
+
+  <script>
+    const $ = (id) => document.getElementById(id);
+
+    const carrierLogo = (name) => {
+      const key = (name || '').toLowerCase();
+      if (key.includes('ups'))   return '<div class="logo ups">UPS</div>';
+      if (key.includes('fedex')) return '<div class="logo fedex">FX</div>';
+      return '<div class="logo usps">USPS</div>';
     };
-    const US_STATE_MAP = {
-      'alabama':'AL','alaska':'AK','arizona':'AZ','arkansas':'AR','california':'CA','north carolina':'NC','carolina del norte':'NC',
-      'south carolina':'SC','carolina del sur':'SC','colorado':'CO','connecticut':'CT','north dakota':'ND','dakota del norte':'ND',
-      'south dakota':'SD','dakota del sur':'SD','delaware':'DE','district of columbia':'DC','distrito de columbia':'DC','dc':'DC',
-      'florida':'FL','georgia':'GA','hawaii':'HI','hawái':'HI','idaho':'ID','illinois':'IL','indiana':'IN','iowa':'IA','kansas':'KS',
-      'kentucky':'KY','louisiana':'LA','maine':'ME','maryland':'MD','massachusetts':'MA','michigan':'MI','minnesota':'MN',
-      'mississippi':'MS','missouri':'MO','montana':'MT','nebraska':'NE','nevada':'NV','new hampshire':'NH','nuevo hampshire':'NH',
-      'new jersey':'NJ','nuevo jersey':'NJ','new mexico':'NM','nuevo méxico':'NM','new york':'NY','nueva york':'NY','ohio':'OH',
-      'oklahoma':'OK','oregon':'OR','pennsylvania':'PA','rhode island':'RI','tennessee':'TN','texas':'TX','utah':'UT','vermont':'VT',
-      'virginia':'VA','washington':'WA','west virginia':'WV','virginia occidental':'WV','wisconsin':'WI','wyoming':'WY'
-    };
 
-    const normalizeCountry = (val) => {
-      if (!val) return 'US';
-      if (typeof val === 'string') {
-        const t = val.trim();
-        if (t.length === 2) return t.toUpperCase();
-        const key = t.toLowerCase();
-        return COUNTRY_MAP[key] || 'US';
+    function renderRates(payload, data) {
+      const wrap = $('results');
+      wrap.innerHTML = '';
+      (data.rates || []).forEach(r => {
+        const row = document.createElement('div');
+        row.className = 'rate';
+        row.innerHTML = `
+          <div class="left">
+            ${carrierLogo(r.carrier)}
+            <div>
+              <div><strong>${r.carrier}</strong> · ${r.service} ${r.mode ? `<span class="tag">${r.mode}</span>`:''}</div>
+              <div style="font-size:12px;color:#9fb0c3">
+                ${r.est_days ? `Entrega: ${r.est_days} días` : (r.est_date ? `Entrega: ${r.est_date}` : '—')}
+              </div>
+            </div>
+          </div>
+          <div class="price">$${r.rate.toFixed(2)}</div>
+        `;
+        wrap.appendChild(row);
+      });
+      if ((data.rates || []).length === 0) {
+        wrap.innerHTML = '<div class="rate"><div>Sin tarifas disponibles para esos datos.</div></div>';
       }
-      return 'US';
-    };
+      // debug opcional
+      const dbg = $('debug');
+      dbg.style.display = 'block';
+      dbg.textContent = JSON.stringify({ sent: payload, received: data }, null, 2);
+    }
 
-    const normalizeState = (country, val) => {
-      if (!val) return '';
-      if (country !== 'US') {
-        // Para otros países asume ya viene código
-        return ('' + val).trim().toUpperCase();
-      }
-      const t = ('' + val).trim();
-      if (t.length === 2) return t.toUpperCase();
-      const key = t.toLowerCase();
-      return US_STATE_MAP[key] || t.toUpperCase();
-    };
+    $('searchBtn').addEventListener('click', async () => {
+      const btn = $('searchBtn');
+      btn.disabled = true; btn.textContent = 'Consultando...';
+      $('results').innerHTML = ''; $('debug').style.display='none';
 
-    // Parser “por compatibilidad” del formato viejo "calle, ciudad, ST ZIP, país"
-    const parseLine = (line) => {
-      const s = (typeof line === 'string') ? line : '';
-      const parts = s.split(',').map(x => x.trim());
-      const street1 = parts[0] || '';
-      const city    = parts[1] || '';
-      let state = '', zip = '', country = 'US';
-      if (parts[2]) {
-        // "FL 33056"
-        const m = parts[2].match(/([A-Za-z]{2})\s+(\d{4,10})/);
-        if (m) { state = m[1]; zip = m[2]; }
-      }
-      if (parts[3]) country = parts[3];
-      return { street1, city, state, zip, country };
-    };
-
-    // 1) Formato nuevo recomendado
-    let from = body.from;
-    let to   = body.to;
-
-    // 2) Compatibilidad con formato viejo si no vino el nuevo
-    if (!from && body.origin)      from = parseLine(body.origin);
-    if (!to   && body.destination) to = parseLine(body.destination);
-
-    // Normaliza país/estado y asegura strings
-    const fixAddress = (a) => {
-      if (!a) return a;
-      const country = normalizeCountry(a.country);
-      const state   = normalizeState(country, a.state);
-      return {
-        street1: (a.street1 || '').toString(),
-        city:    (a.city    || '').toString(),
-        state,
-        zip:     (a.zip     || '').toString(),
-        country
+      const payload = {
+        from: {
+          street1: $('fromStreet').value.trim(),
+          city:    $('fromCity').value.trim(),
+          state:   $('fromState').value.trim(),
+          zip:     $('fromZip').value.trim(),
+          country: $('fromCountry').value
+        },
+        to: {
+          street1: $('toStreet').value.trim(),
+          city:    $('toCity').value.trim(),
+          state:   $('toState').value.trim(),
+          zip:     $('toZip').value.trim(),
+          country: $('toCountry').value
+        },
+        parcel: {
+          weight_kg: Number($('weightKg').value),
+          length_cm: Number($('lengthCm').value),
+          width_cm:  Number($('widthCm').value),
+          height_cm: Number($('heightCm').value),
+        }
       };
-    };
-    from = fixAddress(from);
-    to   = fixAddress(to);
 
-    // Validación fuerte (no hacemos “suposiciones”)
-    const missing = [];
-    const need = (obj, label) => {
-      if (!obj) { missing.push(label); return; }
-      ['street1','city','state','zip','country'].forEach(k => { if (!obj[k]) missing.push(`${label}.${k}`); });
-    };
-    need(from, 'from'); need(to, 'to');
-
-    const parcelIn = body.parcel || {};
-    const weightKg = Number(parcelIn.weight_kg ?? parcelIn.weight ?? 0);
-    const lengthCm = Number(parcelIn.length_cm ?? parcelIn.length ?? 0);
-    const widthCm  = Number(parcelIn.width_cm  ?? parcelIn.width  ?? 0);
-    const heightCm = Number(parcelIn.height_cm ?? parcelIn.height ?? 0);
-    if (!weightKg || !lengthCm || !widthCm || !heightCm) {
-      missing.push('parcel.weight_kg/length_cm/width_cm/height_cm');
-    }
-
-    if (missing.length) {
-      return res.status(400).json({ error: 'PARAMS_MISSING', missing });
-    }
-
-    // Unidades de EasyPost
-    const ounces = Math.max(0.1, weightKg) * 35.274;
-    const inches = (cm) => Number(cm) / 2.54;
-
-    const shipment = {
-      to_address:   to,
-      from_address: from,
-      parcel: {
-        weight: ounces,
-        length: inches(lengthCm),
-        width:  inches(widthCm),
-        height: inches(heightCm),
-      },
-      options: { currency: 'USD' },
-    };
-
-    // Llamada a EasyPost
-    const epResp = await fetch('https://api.easypost.com/v2/shipments', {
-      method: 'POST',
-      headers: {
-        'Authorization': 'Basic ' + Buffer.from(apiKey + ':').toString('base64'),
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      body: JSON.stringify({ shipment }),
-      cache: 'no-store'
+      try {
+        const resp = await fetch('/api/rates', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await resp.json();
+        if (!resp.ok) {
+          $('results').innerHTML = `<pre>${JSON.stringify(data,null,2)}</pre>`;
+        } else {
+          renderRates(payload, data);
+        }
+      } catch (e) {
+        $('results').innerHTML = `<pre>${String(e)}</pre>`;
+      } finally {
+        btn.disabled = false; btn.textContent = 'Consultar tarifas reales';
+      }
     });
-
-    const data = await epResp.json();
-    if (!epResp.ok) {
-      return res.status(epResp.status).json({ error: 'EasyPost error', details: data });
-    }
-
-    const rates = (data.rates || [])
-      .map(r => ({
-        id: r.id,
-        carrier: r.carrier,
-        service: r.service,
-        rate: Number(r.rate),
-        currency: r.currency,
-        est_days: r.delivery_days ?? null,
-        est_date: r.delivery_date ?? null,
-        billing_type: r.billing_type ?? null,
-        mode: data.mode || 'test'
-      }))
-      .sort((a,b) => a.rate - b.rate);
-
-    return res.status(200).json({
-      shipment_id: data.id,
-      mode: data.mode,
-      from, to,
-      parcel: { weight_kg: weightKg, length_cm: lengthCm, width_cm: widthCm, height_cm: heightCm },
-      rates
-    });
-
-  } catch (err) {
-    console.error(err);
-    return res.status(500).json({ error: 'SERVER_ERROR', message: String(err?.message || err) });
-  }
-}
+  </script>
+</body>
+</html>
